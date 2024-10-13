@@ -27,12 +27,18 @@ jobs:
 
     - name: Publish the project
       run: dotnet publish -p:PublishProfile=Release
+      
+    - name: Remove PDB files
+      run: find ./publish -name "*.pdb" -type f -delete
+
+    - name: Compress the publish directory
+      run: zip -r G920WheelApp.zip ./publish
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: G920WheelApp
-        path: ./publish
+        path: ./G920WheelApp.zip
         
     - name: Create GitHub Release
       id: create_release
@@ -49,6 +55,6 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./publish
+        asset_path: ./G920WheelApp.zip
         asset_name: G920WheelApp.zip
         asset_content_type: application/zip
