@@ -32,7 +32,7 @@ jobs:
       run: find ./publish -name "*.pdb" -type f -delete
 
     - name: Compress the publish directory
-      run: zip -r G920WheelApp.zip ./publish
+      run: cd publish && zip -r ../G920WheelApp.zip *
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
@@ -46,8 +46,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.2
-        release_name: Release v1.0.2
+        tag_name: v1.0.3
+        release_name: Release v1.0.3
         body: "Publish upload"
         draft: false
         prerelease: false
