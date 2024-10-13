@@ -72,8 +72,8 @@ To set up the project for development, follow these steps:
 
 1. **Clone the Repository**
    ```sh
-   git clone <repository-url>
-   cd <repository-folder>
+   git clone https://github.com/artop123/g920-mapper
+   cd g920-mapper
    ```
 
 2. **Restore Dependencies**
