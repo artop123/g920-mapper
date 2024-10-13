@@ -56,6 +56,7 @@ You can find a complete list of virtual key codes on the Microsoft documentation
 This link provides the hexadecimal codes that can be used in the JSON configuration to map G920 buttons to specific keys on your keyboard.
 
 ## Usage
+1. [Download the latest release](https://github.com/artop123/g920-mapper/releases/latest)
 1. Create a JSON configuration file (`wheelkeys.json`) with the desired key bindings. If the JSON file is missing, the application will prompt you to enter the settings manually, and they will be saved as a new JSON configuration file.
 2. Place the JSON file in the same directory as the executable.
 3. Run the application, and it will use the key mappings specified in the JSON to emulate keyboard inputs from the G920 controller.
@@ -63,8 +64,7 @@ This link provides the hexadecimal codes that can be used in the JSON configurat
 ## Notes
 - You can now provide key values as either hexadecimal strings (e.g., `"0x41"`) or as integers (e.g., `65`), and both formats will be correctly interpreted by the application.
 - If the configuration file is missing, the program will prompt for user input to gather all necessary settings and save them to `wheelkeys.json` for future use.
-- Make sure the key codes in the JSON file are correct; incorrect values may lead to unexpected behavior.
-- Use the provided Microsoft documentation to get the correct values for different keys.
+- Antivirus programs may prevent the application from running if downloaded from github. Either build from the source or add an exception.
 
 ## Development
 

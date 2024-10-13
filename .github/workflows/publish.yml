@@ -46,9 +46,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.3
-        release_name: Release v1.0.3
-        body: "Publish upload"
+        tag_name: v1.0.4
+        release_name: Release v1.0.4
+        body: "Updated readme"
         draft: false
         prerelease: false
 
