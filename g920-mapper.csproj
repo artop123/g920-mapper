@@ -20,4 +20,8 @@
     <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include=".github\workflows\publish.yml" />
+  </ItemGroup>
+
 </Project>
