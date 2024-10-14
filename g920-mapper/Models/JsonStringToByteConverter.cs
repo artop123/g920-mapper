@@ -13,13 +13,16 @@ namespace g920_mapper.Models
 			}
 			else if (reader.TokenType == JsonTokenType.String)
 			{
-				string stringValue = reader.GetString();
-				if (stringValue.StartsWith("0x"))
+				var stringValue = reader.GetString();
+
+				if (stringValue != null && stringValue.StartsWith("0x"))
 				{
 					return Convert.ToByte(stringValue, 16);
 				}
+
 				return Convert.ToByte(stringValue);
 			}
+
 			throw new JsonException();
 		}
 

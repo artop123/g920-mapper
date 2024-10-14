@@ -40,7 +40,7 @@ namespace g920_mapper.Actions
 				case ConsoleKey.Backspace:
 					return 0x08;
 				default:
-					return (byte?)key.KeyChar;
+					return (byte?)char.ToUpper(key.KeyChar);
 			}
 		}
 
@@ -73,7 +73,7 @@ namespace g920_mapper.Actions
 
 			foreach (var property in typeof(WheelKeys).GetProperties(BindingFlags.Public | BindingFlags.Instance))
 			{
-				var currentValue = (byte)property.GetValue(settings.Keys);
+				var currentValue = (byte)(property.GetValue(settings.Keys) ?? 0);
 				var newValue = ReadByteSetting($"Enter value for {property.Name} (default 0x{currentValue:X2}): ");
 
 				if (newValue.HasValue)
@@ -85,7 +85,7 @@ namespace g920_mapper.Actions
 			return settings;
 		}
 
-		private WheelSettings ReadFromFile()
+		private WheelSettings? ReadFromFile()
 		{
 			try
 			{
@@ -100,8 +100,10 @@ namespace g920_mapper.Actions
 
 			catch (Exception ex)
 			{
-				return null;
+				Console.WriteLine($"{ex.Message}");
 			}
+
+			return null;
 		}
 
 		private void SaveToFile(WheelSettings settings)
