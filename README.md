@@ -49,7 +49,7 @@ The configuration file should be in JSON format and allows you to specify the ke
 - **`PedalsClutchValue`**: Clutch pedal rotation to trigger a keyboard event.
 - **`DefaultValue`**: Ignored pedal value (initial pedal rotation).
 - **`Debug`**: Enable or disable debug messages.
-- **`Keys`**: Contains key-value pairs that map G920 inputs to keyboard keys. The values can be given as either hexadecimal strings (e.g., `"0x41"`) or as integers (e.g., `65` for the `A` key).
+- **`Keys`**: Contains key-value pairs that map G920 inputs to keyboard keys. The values can be given as hexadecimal strings (`"0x41"`), as integers (uppercase ASCII `65`) or as characters (`"A"`). All of these values will work as `A`-key.
 
 ### Key Mapping
 - `WHEEL_ROTATION_LEFT` / `WHEEL_ROTATION_RIGHT`: Mapped to arrow left/right keys (`37`, `39`).
@@ -72,10 +72,9 @@ This link provides the hexadecimal codes that can be used in the JSON configurat
 2. Place the JSON file in the same directory as the executable.
 3. Run the application, and it will use the key mappings specified in the JSON to emulate keyboard inputs from the G920 controller.
 
-## Notes
-- You can now provide key values as either hexadecimal strings (e.g., `"0x41"`) or as integers (e.g., `65`), and both formats will be correctly interpreted by the application.
-- If the configuration file is missing, the program will prompt for user input to gather all necessary settings and save them to `wheelkeys.json` for future use.
-- Antivirus programs may prevent the application from running if downloaded from github. Either build from the source or add an exception.
+Running the application will not make any permanent modifications to the system. The application must always be running on the background while playing.
+
+Antivirus programs may prevent the application from running if downloaded from github. Either build from the source or add an exception.
 
 ## Development
 

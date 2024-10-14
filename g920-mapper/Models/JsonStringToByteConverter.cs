@@ -15,12 +15,19 @@ namespace g920_mapper.Models
 			{
 				var stringValue = reader.GetString();
 
-				if (stringValue != null && stringValue.StartsWith("0x"))
+				if (stringValue != null)
 				{
-					return Convert.ToByte(stringValue, 16);
-				}
+					if (stringValue.StartsWith("0x"))
+					{
+						return Convert.ToByte(stringValue, 16);
+					}
+					else if (stringValue.Length == 1)
+					{
+						return (byte)char.ToUpper(stringValue[0]);
+					}
 
-				return Convert.ToByte(stringValue);
+					return Convert.ToByte(stringValue);
+				}
 			}
 
 			throw new JsonException();
