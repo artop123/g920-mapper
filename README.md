@@ -1,6 +1,6 @@
-# G920 Controller Input Configuration
+# Logitech G920 keyboard mapper
 
-This project provides a way to map Logitech G920 racing wheel inputs to keyboard keys by reading settings from a JSON configuration file. This allows for easy customization of key bindings for different racing wheel buttons and actions.
+This project provides a way to map Logitech G920 racing wheel inputs to keyboard keys, allowing the wheel to be used for older games that rely on traditional keyboard input (e.g., arrow keys).
 
 ## Configuration File (`wheelkeys.json`)
 
@@ -37,6 +37,10 @@ The configuration file should be in JSON format and allows you to specify the ke
 - **`DefaultRotation`**: Default rotation value for the wheel (no action).
 - **`RotationMinDiff`**: Minimum difference in rotation to trigger a keyboard event.
 - **`LoopDuration`**: Loop interval for polling input, in milliseconds.
+- **`PedalsAccelerationValue`**: Acceleration pedal rotation to trigger a keyboard event.
+- **`PedalsBrakeValue`**: Brake pedal rotation to trigger a keyboard event.
+- **`PedalsClutchValue`**: Clutch pedal rotation to trigger a keyboard event.
+- **`DefaultValue`**: Ignored pedal value (initial pedal rotation).
 - **`Debug`**: Enable or disable debug messages.
 - **`Keys`**: Contains key-value pairs that map G920 inputs to keyboard keys. The values can be given as either hexadecimal strings (e.g., `"0x41"`) or as integers (e.g., `65` for the `A` key).
 
@@ -77,19 +81,26 @@ To set up the project for development, follow these steps:
    ```
 
 2. **Restore Dependencies**
-   Ensure that you have .NET SDK installed. Run the following command to restore dependencies:
    ```sh
    dotnet restore
    ```
 
 3. **Build the Project**
-   To build the project, use the following command:
    ```sh
    dotnet build
    ```
 
+4. **Run Tests**
+   ```sh
+   dotnet test
+   ```
+
 4. **Run the Application**
-   You can run the application with:
    ```sh
    dotnet run
+   ```
+
+4. **Publish the Application**
+   ```sh
+   dotnet publish -p:PublishProfile=Release
    ```
