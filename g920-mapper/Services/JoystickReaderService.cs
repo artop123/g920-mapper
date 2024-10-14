@@ -7,10 +7,10 @@ namespace g920_mapper.Services
 	public class JoystickReaderService : IDisposable
 	{
 		private readonly DirectInput _directInput;
-		private Joystick _joystick;
-		private Timer _timer;
-		private WheelSettings _settings;
-		private KeyboardService _keyboardService;
+		private Joystick? _joystick;
+		private Timer? _timer;
+		private readonly WheelSettings? _settings;
+		private readonly KeyboardService? _keyboardService;
 
 		public JoystickReaderService(WheelSettings settings)
 		{
@@ -21,21 +21,24 @@ namespace g920_mapper.Services
 
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
-			var joystickGuid = Guid.Empty;
+			var joystickGuid = _directInput
+				.GetDevices(DeviceType.Driving, DeviceEnumerationFlags.AttachedOnly)
+				.FirstOrDefault()?
+				.InstanceGuid;
 
-			foreach (var deviceInstance in _directInput.GetDevices(DeviceType.Driving, DeviceEnumerationFlags.AttachedOnly))
-			{
-				joystickGuid = deviceInstance.InstanceGuid;
-				break;
-			}
-
-			if (joystickGuid == Guid.Empty)
+			if (joystickGuid.HasValue == false)
 			{
 				Console.WriteLine("Wheel not found");
 				return Task.CompletedTask;
 			}
 
-			_joystick = new Joystick(_directInput, joystickGuid);
+			if (_settings == null)
+			{
+				Console.WriteLine("Invalid settings");
+				return Task.CompletedTask;
+			}
+
+			_joystick = new Joystick(_directInput, joystickGuid.Value);
 			_joystick.Acquire();
 
 			Console.WriteLine("Ready to read keys from the wheel. Enjoy!");
@@ -45,10 +48,14 @@ namespace g920_mapper.Services
 			return Task.CompletedTask;
 		}
 
-		private void ReadJoystickState(object state)
+		private void ReadJoystickState(object? state)
 		{
+			if (_joystick == null || _keyboardService == null || _settings == null)
+				return;
+
 			_joystick.Poll();
 			var joystickState = _joystick.GetCurrentState();
+			var debugAction = new DebugAction();
 			var handleWheelAction = new HandleWheelAction()
 				.SetSettings(_settings);
 
@@ -56,7 +63,18 @@ namespace g920_mapper.Services
 			{
 				var downKeys = handleWheelAction
 					.SetJoystick(joystickState)
+					.ParseWheelstate()
 					.Execute();
+
+				if (_settings.Debug)
+				{
+					var wheelstate = handleWheelAction.GetWheelState();
+
+					debugAction
+						.SetWheelstate(wheelstate)
+						.SetKeys(downKeys)
+						.Execute();
+				}
 
 				_keyboardService.HandleKeys(downKeys);
 			}

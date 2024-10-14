@@ -20,6 +20,9 @@ namespace g920_mapper.Models
 		public byte WHEEL_ARROW_DOWN { get; set; } = 0x0;
 		public byte WHEEL_ARROW_LEFT { get; set; } = 0x0;
 		public byte WHEEL_ARROW_RIGHT { get; set; } = 0x0;
+		public byte WHEEL_ACCELERATOR { get; set; } = 0x0;
+		public byte WHEEL_BRAKE { get; set; } = 0x0;
+		public byte WHEEL_CLUTCH { get; set; } = 0x0;
 
 		public byte GetValue(string key)
 		{

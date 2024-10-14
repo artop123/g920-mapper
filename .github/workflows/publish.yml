@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-  workflow_dispatch:
 
 jobs:
   build:
@@ -25,20 +24,23 @@ jobs:
     - name: Build the project
       run: dotnet build --configuration Release
 
+    - name: Run tests
+      run: dotnet test
+      
     - name: Publish the project
       run: dotnet publish -p:PublishProfile=Release
       
     - name: Remove PDB files
-      run: find ./publish -name "*.pdb" -type f -delete
+      run: find ./g920-mapper/publish -name "*.pdb" -type f -delete
 
     - name: Compress the publish directory
-      run: cd publish && zip -r ../G920WheelApp.zip *
+      run: cd g920-mapper/publish && zip -r G920WheelApp.zip *
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: G920WheelApp
-        path: ./G920WheelApp.zip
+        path: ./g920-mapper/publish/G920WheelApp.zip
         
     - name: Create GitHub Release
       id: create_release
@@ -46,9 +48,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.4
-        release_name: Release v1.0.4
-        body: "Updated readme"
+        tag_name: v1.1.0
+        release_name: Release v1.1.0
+        body: "Added support for pedals"
         draft: false
         prerelease: false
 
