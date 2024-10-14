@@ -97,7 +97,7 @@ To set up the project for development, follow these steps:
 
 4. **Run the Application**
    ```sh
-   dotnet run
+   dotnet run --project g920-mapper
    ```
 
 4. **Publish the Application**
