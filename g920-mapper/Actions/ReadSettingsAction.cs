@@ -66,6 +66,18 @@ namespace g920_mapper.Actions
 			settings.RotationMinDiff = ReadSetting($"Enter the RotationMinDiff value (current: {settings.RotationMinDiff}): ")
 				?? settings.RotationMinDiff;
 
+			settings.PedalsAccelerationValue = ReadSetting($"Enter the PedalsAccelerationValue value (current: {settings.PedalsAccelerationValue}): ")
+				?? settings.PedalsAccelerationValue;
+
+			settings.PedalsBrakeValue = ReadSetting($"Enter the PedalsBrakeValue value (current: {settings.PedalsBrakeValue}): ")
+				?? settings.PedalsBrakeValue;
+
+			settings.PedalsClutchValue = ReadSetting($"Enter the PedalsClutchValue value (current: {settings.PedalsClutchValue}): ")
+				?? settings.PedalsClutchValue;
+
+			settings.DefaultValue = ReadSetting($"Enter the DefaultValue that is ignored (current: {settings.DefaultValue}): ")
+				?? settings.DefaultValue;
+
 			settings.LoopDuration = ReadSetting($"Enter the LoopDuration value (current: {settings.LoopDuration}): ")
 				?? settings.LoopDuration;
 

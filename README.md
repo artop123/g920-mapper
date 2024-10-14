@@ -10,7 +10,11 @@ The configuration file should be in JSON format and allows you to specify the ke
 {
     "DefaultRotation": 32767,
     "RotationMinDiff": 1000,
-    "LoopDuration": 100,
+    "LoopDuration": 100
+    "PedalsAccelerationValue": 50000,
+    "PedalsBrakeValue": 50000,
+    "PedalsClutchValue": 50000,
+    "DefaultValue": 32767,
     "Debug": false,
     "Keys": {
         "WHEEL_ROTATION_LEFT": 37,
@@ -28,7 +32,10 @@ The configuration file should be in JSON format and allows you to specify the ke
         "WHEEL_ARROW_UP": 38,
         "WHEEL_ARROW_DOWN": 40,
         "WHEEL_ARROW_LEFT": 37,
-        "WHEEL_ARROW_RIGHT": 39
+        "WHEEL_ARROW_RIGHT": 39,
+        "WHEEL_ACCELERATOR": 38,
+        "WHEEL_BRAKE": 40,
+        "WHEEL_CLUTCH": 90
     }
 }
 ```
