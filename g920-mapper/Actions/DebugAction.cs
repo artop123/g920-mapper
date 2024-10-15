@@ -62,11 +62,11 @@ namespace g920_mapper.Actions
 			var rowWidth = 64;
 			var fieldWith = 50;
 			var valueWidth = rowWidth - fieldWith;
+			var line = new string('-', rowWidth);
 			var keys = string.Join(", ", _keys.Select(k => k.ToString()));
 
 			Console.WriteLine($"{DateTime.Now.ToString("G").PadRight(rowWidth)}");
-			Console.WriteLine($"{"Remember to disable debugging after evaluating!".PadRight(rowWidth)}");
-			Console.WriteLine($"{new string('-', rowWidth)}");
+			Console.WriteLine($"{line}");
 
 			var fields = typeof(WheelState).GetProperties(BindingFlags.Public | BindingFlags.Instance);
 			foreach (var field in fields)
@@ -75,7 +75,7 @@ namespace g920_mapper.Actions
 				Console.WriteLine($"{field.Name.PadRight(fieldWith)}{GetPaddedValue(value, valueWidth)}");
 			}
 
-			Console.WriteLine($"{new string('-', rowWidth)}");
+			Console.WriteLine($"{line}");
 			Console.WriteLine($"{"Sending keys".PadRight(fieldWith)}{GetPaddedValue(keys, valueWidth)}");
 		}
 	}
