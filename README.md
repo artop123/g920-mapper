@@ -1,8 +1,8 @@
 ﻿# Logitech G920 keyboard mapper
 
-This project maps Logitech G920 racing wheel inputs to keyboard keys, enabling the wheel to be used for older games that require traditional keyboard input (e.g., arrow keys).
+![Logitech G920 keyboard mapper](assets/header.jpg)
 
-![Debugging example](assets/debugging.jpg)
+This project maps Logitech G920 racing wheel inputs to keyboard keys, enabling the wheel to be used for older games that require traditional keyboard input (e.g., arrow keys).
 
 ## Configuration File (`wheelkeys.json`)
 
@@ -41,6 +41,10 @@ The configuration file should be in JSON format and allows you to specify the ke
     }
 }
 ```
+
+With debugging enabled (`Debug: true`), you can view the values parsed from the controller:
+
+![Debugging example](assets/debugging.jpg)
 
 ### Field Descriptions
 - **`DefaultRotation`**: Default rotation value for the wheel (no action).
