@@ -1,4 +1,4 @@
-name: .NET Publish
+﻿name: .NET Publish
 
 on:
   push:
@@ -20,6 +20,9 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '8.0.x'
+
+    - name: Lint the code
+      run: dotnet format --verify-no-changes
 
     - name: Determine version
       id: version
