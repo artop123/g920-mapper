@@ -1,4 +1,4 @@
-﻿namespace g920_mapper.Models
+﻿namespace g920_mapper.Interfaces
 {
 	public interface IJoystickState
 	{

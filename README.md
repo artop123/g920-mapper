@@ -1,10 +1,12 @@
 # Logitech G920 keyboard mapper
 
-This project provides a way to map Logitech G920 racing wheel inputs to keyboard keys, allowing the wheel to be used for older games that rely on traditional keyboard input (e.g., arrow keys).
+This project maps Logitech G920 racing wheel inputs to keyboard keys, enabling the wheel to be used for older games that require traditional keyboard input (e.g., arrow keys).
+
+![Debugging example](assets/debugging.jpg)
 
 ## Configuration File (`wheelkeys.json`)
 
-The configuration file should be in JSON format and allows you to specify the key bindings for various G920 inputs. Below is an example JSON structure with descriptions of each field:
+The configuration file should be in JSON format and allows you to specify the key bindings for various G920 inputs. Below is a complete example JSON structure with descriptions of each field:
 
 ```json
 {
@@ -49,7 +51,7 @@ The configuration file should be in JSON format and allows you to specify the ke
 - **`PedalsClutchValue`**: Clutch pedal rotation to trigger a keyboard event.
 - **`DefaultValue`**: Ignored pedal value (initial pedal rotation).
 - **`Debug`**: Enable or disable debug messages.
-- **`Keys`**: Contains key-value pairs that map G920 inputs to keyboard keys. The values can be given as hexadecimal strings (`"0x41"`), as integers (uppercase ASCII `65`) or as characters (`"A"`). All of these values will work as `A`-key.
+- **`Keys`**: Contains key-value pairs that map G920 inputs to keyboard keys. Values can be provided as hexadecimal strings (`"0x41"`), integers (`65`), or characters (`"A"`). All these formats will map to the `A` key.
 
 ### Key Mapping
 - `WHEEL_ROTATION_LEFT` / `WHEEL_ROTATION_RIGHT`: Mapped to arrow left/right keys (`37`, `39`).
@@ -60,53 +62,50 @@ The configuration file should be in JSON format and allows you to specify the ke
 - `WHEEL_ARROW_*`: D-pad arrow buttons mapped to arrow keys (`38`, `40`, `37`, `39`).
 
 ## Reference for Key Codes
-You can find a complete list of virtual key codes on the Microsoft documentation page:
 
-- [Virtual-Key Codes (Windows)](https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
-
-This link provides the hexadecimal codes that can be used in the JSON configuration to map G920 buttons to specific keys on your keyboard.
+- [ASCII Codes](https://www.asciitable.com/)
+- [Hexadecimal Virtual-Key Codes (Windows)](https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
 
 ## Usage
-1. [Download the latest release](https://github.com/artop123/g920-mapper/releases/latest)
-1. Create a JSON configuration file (`wheelkeys.json`) with the desired key bindings. If the JSON file is missing, the application will prompt you to enter the settings manually, and they will be saved as a new JSON configuration file.
-2. Place the JSON file in the same directory as the executable.
-3. Run the application, and it will use the key mappings specified in the JSON to emulate keyboard inputs from the G920 controller.
+1. You need to have the [.NET 8 runtime](https://dotnet.microsoft.com/download/dotnet/8.0) installed
+2. [Download the latest release](https://github.com/artop123/g920-mapper/releases/latest)
+3. Create a JSON configuration file (`wheelkeys.json`) with the desired key bindings. If the JSON file is missing, the application will prompt you to enter the settings manually, and they will be saved as a new JSON configuration file.
+4. Place the JSON file in the same directory as the executable.
+5. Run the application, and it will use the key mappings specified in the JSON to emulate keyboard inputs from the G920 controller.
 
 Running the application will not make any permanent modifications to the system. The application must always be running on the background while playing.
 
-Antivirus programs may prevent the application from running if downloaded from github. Either build from the source or add an exception.
+Antivirus programs may prevent the application from running if downloaded from GitHub. Consider building from the source or adding an exception.
 
 ## Development
 
-To set up the project for development, follow these steps:
-
-1. **Clone the Repository**
+   **Clone the Repository**
    ```sh
    git clone https://github.com/artop123/g920-mapper
    cd g920-mapper
    ```
 
-2. **Restore Dependencies**
+   **Restore Dependencies**
    ```sh
    dotnet restore
    ```
 
-3. **Build the Project**
+   **Build the Project**
    ```sh
    dotnet build
    ```
 
-4. **Run Tests**
+   **Run Tests**
    ```sh
    dotnet test
    ```
 
-4. **Run the Application**
+   **Run the Application**
    ```sh
    dotnet run --project g920-mapper
    ```
 
-4. **Publish the Application**
+   **Publish the Application to the /g920-mapper/publish/ folder**
    ```sh
    dotnet publish -p:PublishProfile=Release
    ```

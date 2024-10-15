@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using g920_mapper.Models;
-using SharpDX.DirectInput;
 using Moq;
 using Xunit;
+using g920_mapper.Interfaces;
 
 namespace g920_mapper.Actions.Tests
 {
