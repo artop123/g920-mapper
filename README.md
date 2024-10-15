@@ -1,4 +1,4 @@
-# Logitech G920 keyboard mapper
+﻿# Logitech G920 keyboard mapper
 
 This project maps Logitech G920 racing wheel inputs to keyboard keys, enabling the wheel to be used for older games that require traditional keyboard input (e.g., arrow keys).
 
@@ -105,7 +105,9 @@ Antivirus programs may prevent the application from running if downloaded from G
    dotnet run --project g920-mapper
    ```
 
-   **Publish the Application to the /g920-mapper/publish/ folder**
+   **Publish the Application**
+
+   The application (win-x64) will be published to `/g920-mapper/publish/`
    ```sh
-   dotnet publish -p:PublishProfile=Release
+   dotnet publish g920-mapper\g920-mapper.csproj -p:PublishProfile=Release
    ```

@@ -63,7 +63,7 @@ namespace g920_mapper.Tests
 			var debugAction = new DebugAction();
 
 			// Act
-			Action act = () => debugAction.SetKeys(null);
+			Action act = () => debugAction.SetKeys(null!);
 
 			// Assert
 			act.Should().Throw<ArgumentNullException>();

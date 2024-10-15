@@ -1,5 +1,5 @@
-﻿using g920_mapper.Models;
-using System.Reflection;
+﻿using System.Reflection;
+using g920_mapper.Models;
 
 namespace g920_mapper.Actions
 {
@@ -60,7 +60,7 @@ namespace g920_mapper.Actions
 			}
 
 			var rowWidth = 64;
-			var fieldWith = 50; 
+			var fieldWith = 50;
 			var valueWidth = rowWidth - fieldWith;
 			var keys = string.Join(", ", _keys.Select(k => k.ToString()));
 

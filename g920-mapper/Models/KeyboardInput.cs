@@ -1,5 +1,5 @@
-﻿using g920_mapper.Interfaces;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
+using g920_mapper.Interfaces;
 
 namespace g920_mapper.Models
 {
