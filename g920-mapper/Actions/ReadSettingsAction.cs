@@ -6,7 +6,7 @@ namespace g920_mapper.Actions
 {
 	public class ReadSettingsAction
 	{
-		private string _path;
+		private readonly string _path;
 
 		public ReadSettingsAction(string path)
 		{
@@ -18,30 +18,19 @@ namespace g920_mapper.Actions
 			Console.WriteLine(prompt);
 			var key = Console.ReadKey(intercept: true);
 
-			// Handle arrow keys and other special keys
-			switch (key.Key)
+			return key.Key switch
 			{
-				case ConsoleKey.LeftArrow:
-					return 0x25;
-				case ConsoleKey.RightArrow:
-					return 0x27;
-				case ConsoleKey.UpArrow:
-					return 0x26;
-				case ConsoleKey.DownArrow:
-					return 0x28;
-				case ConsoleKey.Enter:
-					return 0x0D;
-				case ConsoleKey.Escape:
-					return 0x1B;
-				case ConsoleKey.Spacebar:
-					return 0x20;
-				case ConsoleKey.Tab:
-					return 0x09;
-				case ConsoleKey.Backspace:
-					return 0x08;
-				default:
-					return (byte?)char.ToUpper(key.KeyChar);
-			}
+				ConsoleKey.LeftArrow => (byte?)0x25,
+				ConsoleKey.RightArrow => (byte?)0x27,
+				ConsoleKey.UpArrow => (byte?)0x26,
+				ConsoleKey.DownArrow => (byte?)0x28,
+				ConsoleKey.Enter => (byte?)0x0D,
+				ConsoleKey.Escape => (byte?)0x1B,
+				ConsoleKey.Spacebar => (byte?)0x20,
+				ConsoleKey.Tab => (byte?)0x09,
+				ConsoleKey.Backspace => (byte?)0x08,
+				_ => (byte?)char.ToUpper(key.KeyChar),
+			};
 		}
 
 		private int? ReadSetting(string prompt)
@@ -53,35 +42,40 @@ namespace g920_mapper.Actions
 				? res
 				: null;
 		}
+		private int? GetCurrentValue(object? value) => value switch
+		{
+			true => 1,
+			false => 0,
+			_ => (int?)value
+		};
 
 		private WheelSettings ReadFromUser()
 		{
 			var settings = new WheelSettings();
+			var properties = typeof(WheelSettings)
+				.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+				.Where(p => p.PropertyType == typeof(int) || p.PropertyType == typeof(bool));
 
 			Console.WriteLine("No settings found. Please enter the following settings. Leave empty to use default values.");
 
-			settings.DefaultRotation = ReadSetting($"Enter the DefaultRotation value (current: {settings.DefaultRotation}): ")
-				?? settings.DefaultRotation;
+			foreach (var property in properties)
+			{
+				var value = property.GetValue(settings);
+				var currentValue = GetCurrentValue(value);
+				var newValue = ReadSetting($"Enter value for {property.Name} (current {currentValue}): ");
 
-			settings.RotationMinDiff = ReadSetting($"Enter the RotationMinDiff value (current: {settings.RotationMinDiff}): ")
-				?? settings.RotationMinDiff;
-
-			settings.PedalsAccelerationValue = ReadSetting($"Enter the PedalsAccelerationValue value (current: {settings.PedalsAccelerationValue}): ")
-				?? settings.PedalsAccelerationValue;
-
-			settings.PedalsBrakeValue = ReadSetting($"Enter the PedalsBrakeValue value (current: {settings.PedalsBrakeValue}): ")
-				?? settings.PedalsBrakeValue;
-
-			settings.PedalsClutchValue = ReadSetting($"Enter the PedalsClutchValue value (current: {settings.PedalsClutchValue}): ")
-				?? settings.PedalsClutchValue;
-
-			settings.DefaultValue = ReadSetting($"Enter the DefaultValue that is ignored (current: {settings.DefaultValue}): ")
-				?? settings.DefaultValue;
-
-			settings.LoopDuration = ReadSetting($"Enter the LoopDuration value (current: {settings.LoopDuration}): ")
-				?? settings.LoopDuration;
-
-			settings.Debug = ReadSetting($"Enter the Debug value ({(settings.Debug ? 1 : 0)}): ") == 1;
+				if (newValue.HasValue)
+				{
+					if (property.PropertyType == typeof(int))
+					{
+						property.SetValue(settings, newValue.Value);
+					}
+					else if (property.PropertyType == typeof(bool))
+					{
+						property.SetValue(settings, newValue.Value == 1);
+					}
+				}
+			}
 
 			foreach (var property in typeof(WheelKeys).GetProperties(BindingFlags.Public | BindingFlags.Instance))
 			{
