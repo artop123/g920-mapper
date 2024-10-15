@@ -4,6 +4,8 @@
 
 This project maps Logitech G920 racing wheel inputs to keyboard keys, enabling the wheel to be used for older games that require traditional keyboard input (e.g., arrow keys).
 
+The application reads input data from the controller using DirectInput (DirectX API). While designed for the G920, it may work with other DirectInput-compatible controllers, though adjustments might be needed for different layouts.
+
 ## Configuration File (`wheelkeys.json`)
 
 The configuration file should be in JSON format and allows you to specify the key bindings for various G920 inputs. Below is a complete example JSON structure with descriptions of each field:
@@ -82,6 +84,8 @@ Running the application will not make any permanent modifications to the system.
 Antivirus programs may prevent the application from running if downloaded from GitHub. Consider building from the source or adding an exception.
 
 ## Development
+
+You need to have the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) installed
 
    **Clone the Repository**
    ```sh
