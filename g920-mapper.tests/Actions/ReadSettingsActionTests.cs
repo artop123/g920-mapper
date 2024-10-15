@@ -40,7 +40,7 @@ namespace g920_mapper.Actions.Tests
 			// Assert
 			result.Should().NotBeNull();
 			result.Keys.Should().NotBeNull();
-			result.Keys.WHEEL_A.Should().Be(0x41); 
+			result.Keys.WHEEL_A.Should().Be(0x41);
 			result.Keys.WHEEL_B.Should().Be(0x42);
 			result.Keys.WHEEL_X.Should().Be(0x58);
 			result.Keys.WHEEL_Y.Should().Be(0x59);

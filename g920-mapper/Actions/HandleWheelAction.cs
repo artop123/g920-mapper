@@ -1,6 +1,7 @@
-﻿using g920_mapper.Models;
+﻿using System.Reflection;
+using g920_mapper.Interfaces;
+using g920_mapper.Models;
 using SharpDX.DirectInput;
-using System.Reflection;
 
 namespace g920_mapper.Actions
 {

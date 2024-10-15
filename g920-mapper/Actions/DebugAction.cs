@@ -1,4 +1,5 @@
-﻿using g920_mapper.Models;
+﻿using System.Reflection;
+using g920_mapper.Models;
 
 namespace g920_mapper.Actions
 {
@@ -6,10 +7,19 @@ namespace g920_mapper.Actions
 	{
 		private List<byte> _keys;
 		private WheelState? _wheelState;
+		private bool _clearConsole;
 
 		public DebugAction()
 		{
 			_keys = [];
+			_clearConsole = true;
+		}
+
+		public DebugAction SetClearConsole(bool clearConsole)
+		{
+			_clearConsole = clearConsole;
+
+			return this;
 		}
 
 		public DebugAction SetWheelstate(WheelState? state)
@@ -28,41 +38,45 @@ namespace g920_mapper.Actions
 			return this;
 		}
 
+		private string GetPaddedValue(object? value, int pad = 50)
+		{
+			var text = value switch
+			{
+				null => string.Empty,
+				bool boolValue => (boolValue ? "true" : string.Empty),
+				_ => value.ToString()
+			};
+
+			return text!.PadLeft(pad);
+		}
+
 		public void Execute()
 		{
 			ArgumentNullException.ThrowIfNull(_wheelState);
 
-			Console.Clear();
-			Console.WriteLine(@$"{DateTime.Now:G} 
-Remember to disable debugging after evaluating!
---------------------------------------------------------
-RAW_WHEEL_ROTATION:     {_wheelState.RAW_WHEEL_ROTATION} 
-RAW_PEDAL_ACCELERATION:	{_wheelState.RAW_PEDAL_ACCELERATION}
-RAW_PEDAL_BRAKE:        {_wheelState.RAW_PEDAL_BRAKE} 
-RAW_PEDAL_CLUTCH:       {_wheelState.RAW_PEDAL_CLUTCH} 
---------------------------------------------------------
-WHEEL_ROTATION_LEFT:    {(_wheelState.WHEEL_ROTATION_LEFT ? "true" : "")} 
-WHEEL_ROTATION_RIGHT:   {(_wheelState.WHEEL_ROTATION_RIGHT ? "true" : "")} 
-WHEEL_A:                {(_wheelState.WHEEL_A ? "true" : "")} 
-WHEEL_B:                {(_wheelState.WHEEL_B ? "true" : "")} 
-WHEEL_X:                {(_wheelState.WHEEL_X ? "true" : "")} 
-WHEEL_Y:                {(_wheelState.WHEEL_Y ? "true" : "")} 
-WHEEL_LB:               {(_wheelState.WHEEL_LB ? "true" : "")} 
-WHEEL_RB:               {(_wheelState.WHEEL_RB ? "true" : "")} 
-WHEEL_LSB:              {(_wheelState.WHEEL_LSB ? "true" : "")} 
-WHEEL_RSB:              {(_wheelState.WHEEL_RSB ? "true" : "")} 
-WHEEL_ACTION_RIGHT:     {(_wheelState.WHEEL_ACTION_RIGHT ? "true" : "")} 
-WHEEL_ACTION_LEFT:      {(_wheelState.WHEEL_ACTION_LEFT ? "true" : "")} 
-WHEEL_ARROW_UP:         {(_wheelState.WHEEL_ARROW_UP ? "true" : "")} 
-WHEEL_ARROW_DOWN:       {(_wheelState.WHEEL_ARROW_DOWN ? "true" : "")} 
-WHEEL_ARROW_LEFT:       {(_wheelState.WHEEL_ARROW_LEFT ? "true" : "")} 
-WHEEL_ARROW_RIGHT:      {(_wheelState.WHEEL_ARROW_RIGHT ? "true" : "")} 
-WHEEL_ACCELERATOR:      {(_wheelState.WHEEL_ACCELERATOR ? "true" : "")} 
-WHEEL_BRAKE:            {(_wheelState.WHEEL_BRAKE ? "true" : "")} 
-WHEEL_CLUTCH:           {(_wheelState.WHEEL_CLUTCH ? "true" : "")}
---------------------------------------------------------
-Sending keys:           {string.Join(", ", _keys.Select(k => k.ToString()))}
-");
+			if (_clearConsole)
+			{
+				Console.SetCursorPosition(0, 0);
+			}
+
+			var rowWidth = 64;
+			var fieldWith = 50;
+			var valueWidth = rowWidth - fieldWith;
+			var line = new string('-', rowWidth);
+			var keys = string.Join(", ", _keys.Select(k => k.ToString()));
+
+			Console.WriteLine($"{DateTime.Now.ToString("G").PadRight(rowWidth)}");
+			Console.WriteLine($"{line}");
+
+			var fields = typeof(WheelState).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+			foreach (var field in fields)
+			{
+				var value = field.GetValue(_wheelState);
+				Console.WriteLine($"{field.Name.PadRight(fieldWith)}{GetPaddedValue(value, valueWidth)}");
+			}
+
+			Console.WriteLine($"{line}");
+			Console.WriteLine($"{"Sending keys".PadRight(fieldWith)}{GetPaddedValue(keys, valueWidth)}");
 		}
 	}
 }

@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
+using g920_mapper.Interfaces;
 using g920_mapper.Models;
-using SharpDX.DirectInput;
 using Moq;
 using Xunit;
 
@@ -67,7 +67,7 @@ namespace g920_mapper.Actions.Tests
 			joystickStateMock.Setup(js => js.RotationZ).Returns(15000);
 			joystickStateMock.Setup(js => js.Buttons).Returns(new bool[12] { true, false, false, false, false, false, false, false, false, false, false, false });
 			joystickStateMock.Setup(js => js.PointOfViewControllers).Returns(new[] { 0 });
-			
+
 			var settings = new WheelSettings
 			{
 				DefaultRotation = 32767,

@@ -1,4 +1,4 @@
-name: .NET Publish
+﻿name: .NET Publish
 
 on:
   push:
@@ -21,6 +21,18 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
+    - name: Lint the code
+      run: dotnet format --verify-no-changes
+
+    - name: Determine version
+      id: version
+      run: |
+        VERSION=$(git describe --tags --abbrev=0)
+        VERSION=${VERSION/v/}
+        IFS='.' read -r -a VERSION_PARTS <<< "$VERSION"
+        PATCH=$((VERSION_PARTS[2] + 1))
+        echo "::set-output name=version::${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.$PATCH"
+
     - name: Restore dependencies
       run: dotnet restore
 
@@ -31,7 +43,7 @@ jobs:
       run: dotnet test
       
     - name: Publish the project
-      run: dotnet publish -p:PublishProfile=Release
+      run: dotnet publish g920-mapper\g920-mapper.csproj -p:PublishProfile=Release /p:Version=${{ steps.version.outputs.version }}
       
     - name: Remove PDB files
       run: find ./g920-mapper/publish -name "*.pdb" -type f -delete
@@ -44,15 +56,6 @@ jobs:
       with:
         name: G920WheelApp
         path: ./g920-mapper/publish/G920WheelApp.zip
-
-    - name: Determine version
-      id: version
-      run: |
-        VERSION=$(git describe --tags --abbrev=0)
-        VERSION=${VERSION/v/}
-        IFS='.' read -r -a VERSION_PARTS <<< "$VERSION"
-        PATCH=$((VERSION_PARTS[2] + 1))
-        echo "::set-output name=version::${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.$PATCH"
 
     - name: Create GitHub Release
       id: create_release

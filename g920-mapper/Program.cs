@@ -11,17 +11,24 @@ class Program
 			.Execute();
 
 		var joystickReader = new JoystickReaderService(settings);
+		var running = true;
+
+		Console.WriteLine("Press ESC or CTRL+c to stop");
+		Console.CancelKeyPress += async (sender, e) =>
+		{
+			await joystickReader.StopAsync(CancellationToken.None);
+			e.Cancel = false;
+			running = false;
+		};
 
 		await joystickReader.StartAsync(CancellationToken.None);
 
-		Console.WriteLine("Press ESC to stop");
-
-		while (true)
+		while (running)
 		{
 			if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape)
 			{
 				await joystickReader.StopAsync(CancellationToken.None);
-				break;
+				running = false;
 			}
 		}
 

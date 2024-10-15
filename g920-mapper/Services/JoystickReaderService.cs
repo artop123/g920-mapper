@@ -15,7 +15,7 @@ namespace g920_mapper.Services
 		public JoystickReaderService(WheelSettings settings)
 		{
 			_directInput = new DirectInput();
-			_keyboardService = new KeyboardService();
+			_keyboardService = new KeyboardService(new KeyboardInput());
 			_settings = settings;
 		}
 
@@ -82,6 +82,7 @@ namespace g920_mapper.Services
 
 		public Task StopAsync(CancellationToken cancellationToken)
 		{
+			_keyboardService?.HandleKeys([]);
 			_timer?.Change(Timeout.Infinite, 0);
 			return Task.CompletedTask;
 		}
