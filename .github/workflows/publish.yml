@@ -43,7 +43,7 @@ jobs:
       run: dotnet test
       
     - name: Publish the project
-      run: dotnet publish g920-mapper\g920-mapper.csproj -p:PublishProfile=Release /p:Version=${{ steps.version.outputs.version }}
+      run: dotnet publish g920-mapper/g920-mapper.csproj -p:PublishProfile=Release /p:Version=${{ steps.version.outputs.version }}
       
     - name: Remove PDB files
       run: find ./g920-mapper/publish -name "*.pdb" -type f -delete

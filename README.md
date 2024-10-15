@@ -117,5 +117,5 @@ You need to have the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8
 
    The application (win-x64) will be published to `/g920-mapper/publish/`
    ```sh
-   dotnet publish g920-mapper\g920-mapper.csproj -p:PublishProfile=Release
+   dotnet publish g920-mapper/g920-mapper.csproj -p:PublishProfile=Release
    ```
