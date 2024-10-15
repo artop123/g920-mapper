@@ -44,13 +44,9 @@ The configuration file should be in JSON format and allows you to specify the ke
 }
 ```
 
-With debugging enabled (`Debug: true`), you can view the values parsed from the controller:
-
-![Debugging example](assets/debugging.jpg)
-
 ### Field Descriptions
 - **`DefaultRotation`**: Default rotation value for the wheel (no action).
-- **`RotationMinDiff`**: Minimum difference in rotation to trigger a keyboard event.
+- **`RotationMinDiff`**: How much rotation is required to trigger a keyboard event.
 - **`LoopDuration`**: Loop interval for polling input, in milliseconds.
 - **`PedalsAccelerationValue`**: Acceleration pedal rotation to trigger a keyboard event.
 - **`PedalsBrakeValue`**: Brake pedal rotation to trigger a keyboard event.
@@ -82,6 +78,12 @@ With debugging enabled (`Debug: true`), you can view the values parsed from the 
 Running the application will not make any permanent modifications to the system. The application must always be running on the background while playing.
 
 Antivirus programs may prevent the application from running if downloaded from GitHub. Consider building from the source or adding an exception.
+
+## Debugging
+
+With debugging enabled (`Debug: true`), you can view the values parsed from the controller. This helps you determine the optimal settings for steering and pedals.
+
+![Debugging example](assets/debugging.jpg)
 
 ## Development
 
@@ -115,7 +117,8 @@ You need to have the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8
 
    **Publish the Application**
 
-   The application (win-x64) will be published to `/g920-mapper/publish/`
    ```sh
    dotnet publish g920-mapper/g920-mapper.csproj -p:PublishProfile=Release
    ```
+   
+   The application (win-x64) will be published to `/g920-mapper/publish/` folder
