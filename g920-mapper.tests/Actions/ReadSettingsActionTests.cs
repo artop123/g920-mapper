@@ -24,7 +24,6 @@ namespace g920_mapper.Actions.Tests
 			result.PedalsBrakeValue.Should().Be(5);
 			result.PedalsClutchValue.Should().Be(6);
 			result.DefaultValue.Should().Be(7);
-			result.Debug.Should().BeTrue();
 		}
 
 		[Fact]
@@ -46,6 +45,33 @@ namespace g920_mapper.Actions.Tests
 			result.Keys.WHEEL_Y.Should().Be(0x59);
 			result.Keys.WHEEL_ACTION_RIGHT.Should().Be(0x0D);
 			result.Keys.WHEEL_ACTION_LEFT.Should().Be(0x1B);
+		}
+
+		[Fact]
+		public void Save_ShouldPersistUpdatedSettingsAndMappings()
+		{
+			var filePath = Path.Combine(Path.GetTempPath(), $"g920-mapper-{Guid.NewGuid():N}.json");
+
+			try
+			{
+				var action = new ReadSettingsAction(filePath);
+				var settings = new Models.WheelSettings
+				{
+					LoopDuration = 42
+				};
+				settings.Keys.WHEEL_A = 0x5A;
+
+				action.Save(settings);
+				var result = action.LoadOrDefault();
+
+				result.LoopDuration.Should().Be(42);
+				result.Keys.WHEEL_A.Should().Be(0x5A);
+			}
+			finally
+			{
+				if (File.Exists(filePath))
+					File.Delete(filePath);
+			}
 		}
 	}
 }

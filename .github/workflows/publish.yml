@@ -2,8 +2,8 @@
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - 'v*.*.*'
 
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '10.0.x'
 
     - name: Lint the code
       run: dotnet format --verify-no-changes
@@ -27,20 +27,25 @@ jobs:
     - name: Determine version
       id: version
       run: |
-        VERSION=$(git describe --tags --abbrev=0)
-        VERSION=${VERSION/v/}
-        IFS='.' read -r -a VERSION_PARTS <<< "$VERSION"
-        PATCH=$((VERSION_PARTS[2] + 1))
-        echo "::set-output name=version::${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.$PATCH"
+        TAG="$GITHUB_REF_NAME"
+
+        if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "Tag '$TAG' must use the format vMAJOR.MINOR.PATCH."
+          exit 1
+        fi
+
+        VERSION=${TAG#v}
+        echo "Publishing version $VERSION"
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
     - name: Restore dependencies
       run: dotnet restore
 
     - name: Build the project
-      run: dotnet build --configuration Release
+      run: dotnet build --configuration Release -p:Version=${{ steps.version.outputs.version }}
 
     - name: Run tests
-      run: dotnet test
+      run: dotnet test --configuration Release --no-build -p:Version=${{ steps.version.outputs.version }}
       
     - name: Publish the project
       run: dotnet publish g920-mapper/g920-mapper.csproj -p:PublishProfile=Release /p:Version=${{ steps.version.outputs.version }}
