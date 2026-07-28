@@ -57,10 +57,11 @@ jobs:
       run: cd g920-mapper/publish && zip -r G920WheelApp.zip *
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: G920WheelApp
         path: ./g920-mapper/publish/G920WheelApp.zip
+        if-no-files-found: error
 
     - name: Create GitHub Release
       id: create_release
