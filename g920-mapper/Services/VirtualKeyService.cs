@@ -1,9 +1,44 @@
 ﻿using System.Globalization;
 
+using Terminal.Gui.Drivers;
+using Terminal.Gui.Input;
+
 namespace g920_mapper.Services
 {
 	public static class VirtualKeyService
 	{
+		private static readonly IReadOnlyDictionary<KeyCode, byte> TerminalSpecialKeys =
+			new Dictionary<KeyCode, byte>
+			{
+				[KeyCode.Backspace] = 0x08,
+				[KeyCode.Tab] = 0x09,
+				[KeyCode.Enter] = 0x0D,
+				[KeyCode.Esc] = 0x1B,
+				[KeyCode.Space] = 0x20,
+				[KeyCode.PageUp] = 0x21,
+				[KeyCode.PageDown] = 0x22,
+				[KeyCode.End] = 0x23,
+				[KeyCode.Home] = 0x24,
+				[KeyCode.CursorLeft] = 0x25,
+				[KeyCode.CursorUp] = 0x26,
+				[KeyCode.CursorRight] = 0x27,
+				[KeyCode.CursorDown] = 0x28,
+				[KeyCode.Insert] = 0x2D,
+				[KeyCode.Delete] = 0x2E,
+				[KeyCode.F1] = 0x70,
+				[KeyCode.F2] = 0x71,
+				[KeyCode.F3] = 0x72,
+				[KeyCode.F4] = 0x73,
+				[KeyCode.F5] = 0x74,
+				[KeyCode.F6] = 0x75,
+				[KeyCode.F7] = 0x76,
+				[KeyCode.F8] = 0x77,
+				[KeyCode.F9] = 0x78,
+				[KeyCode.F10] = 0x79,
+				[KeyCode.F11] = 0x7A,
+				[KeyCode.F12] = 0x7B
+			};
+
 		private static readonly IReadOnlyDictionary<string, byte> NamedKeys =
 			new Dictionary<string, byte>(StringComparer.OrdinalIgnoreCase)
 			{
@@ -78,6 +113,28 @@ namespace g920_mapper.Services
 			}
 
 			return false;
+		}
+
+		public static bool TryFromTerminalKey(Key key, out byte value)
+		{
+			value = key.ModifierKey switch
+			{
+				ModifierKey.Shift or ModifierKey.LeftShift or ModifierKey.RightShift => 0x10,
+				ModifierKey.Ctrl or ModifierKey.LeftCtrl or ModifierKey.RightCtrl => 0x11,
+				ModifierKey.Alt or ModifierKey.LeftAlt or ModifierKey.RightAlt or ModifierKey.AltGr => 0x12,
+				_ => 0
+			};
+
+			if (value != 0)
+				return true;
+
+			var unmodifiedKey = key.NoShift.NoCtrl.NoAlt;
+			if (TerminalSpecialKeys.TryGetValue(unmodifiedKey.KeyCode, out value))
+				return true;
+
+			var rune = unmodifiedKey.AsRune;
+			return rune.Value is > 0 and <= char.MaxValue &&
+				TryParse(((char)rune.Value).ToString(), out value);
 		}
 
 		public static string Format(byte value)

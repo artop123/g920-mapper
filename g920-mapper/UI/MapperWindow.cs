@@ -308,22 +308,13 @@ namespace g920_mapper.UI
 			}
 
 			var property = _mappingProperties[selectedIndex];
-			var currentValue = property.GetValue(_settings.Keys) is byte key ? $"0x{key:X2}" : "0x00";
-			var input = Prompt(
-				$"Edit mapping {property.Name}",
-				"Enter a character, key name (for example LEFT), decimal value, or 0xNN. Enter 0 to remove the mapping:",
-				currentValue);
+			var currentValue = property.GetValue(_settings.Keys) is byte key ? key : (byte)0;
+			var newValue = CaptureMappingKey($"Edit mapping {property.Name}", currentValue);
 
-			if (input == null)
+			if (!newValue.HasValue)
 				return;
 
-			if (!VirtualKeyService.TryParse(input, out var newValue))
-			{
-				ShowError("The key was not recognized. Use one character, a key name, a value from 0 to 255, or a hexadecimal value from 0x00 to 0xFF.");
-				return;
-			}
-
-			property.SetValue(_settings.Keys, newValue);
+			property.SetValue(_settings.Keys, newValue.Value);
 			RefreshMappings(selectedIndex);
 			SaveSettings();
 		}
@@ -362,6 +353,61 @@ namespace g920_mapper.UI
 
 			_application.Run(dialog);
 			return dialog.Result == 1 ? field.Text : null;
+		}
+
+		private byte? CaptureMappingKey(string title, byte currentValue)
+		{
+			using var dialog = new Dialog
+			{
+				Title = title,
+				Width = 64,
+				Height = 9
+			};
+
+			var descriptionLabel = new Label
+			{
+				Text = $"Current: {VirtualKeyService.Format(currentValue)}\nPress the key to map. It will be saved immediately.",
+				X = 1,
+				Y = 1,
+				Width = Dim.Fill(1),
+				Height = 2
+			};
+
+			var captureField = new TextField
+			{
+				Text = "Waiting for a key…",
+				X = 1,
+				Y = 4,
+				Width = Dim.Fill(1),
+				Height = 1
+			};
+
+			byte? capturedValue = null;
+			captureField.KeyDown += (_, key) =>
+			{
+				if (!VirtualKeyService.TryFromTerminalKey(key, out var virtualKey))
+					return;
+
+				capturedValue = virtualKey;
+				key.Handled = true;
+				_application.RequestStop(dialog);
+			};
+
+			var clearButton = new Button { Title = "C_lear mapping" };
+			clearButton.Accepting += (_, args) =>
+			{
+				capturedValue = 0;
+				args.Handled = true;
+				_application.RequestStop(dialog);
+			};
+
+			dialog.Add(descriptionLabel, captureField);
+			dialog.AddButton(clearButton);
+			dialog.AddButton(new Button { Title = "_Cancel" });
+			captureField.SetFocus();
+
+			_application.Run(dialog);
+			return capturedValue;
 		}
 
 		private void SaveSettings()
