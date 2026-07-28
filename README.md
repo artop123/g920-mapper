@@ -1,6 +1,6 @@
 ﻿# Logitech G920 keyboard mapper
 
-![Logitech G920 keyboard mapper](assets/header.jpg)
+![Logitech G920 keyboard mapper](assets/tui.jpg)
 
 This project maps Logitech G920 racing wheel inputs to keyboard keys, enabling the wheel to be used for older games that require traditional keyboard input (e.g., arrow keys).
 
@@ -8,7 +8,9 @@ The application reads input data from the controller using DirectInput (DirectX 
 
 ## Configuration File (`wheelkeys.json`)
 
-The configuration file should be in JSON format and allows you to specify the key bindings for various G920 inputs. Below is a complete example JSON structure with descriptions of each field:
+The configuration file should be in JSON format and allows you to specify the key bindings for various G920 inputs. The configuration can be modified using the terminal user interface or editing the JSON file.
+
+Below is a complete example JSON structure with descriptions of each field:
 
 ```json
 {
@@ -61,17 +63,11 @@ The configuration file should be in JSON format and allows you to specify the ke
 - `WHEEL_ACTION_RIGHT` / `WHEEL_ACTION_LEFT`: Action buttons, such as ENTER (`13`) and ESC (`27`).
 - `WHEEL_ARROW_*`: D-pad arrow buttons mapped to arrow keys (`38`, `40`, `37`, `39`).
 
-## Reference for Key Codes
-
-- [ASCII Codes](https://www.asciitable.com/)
-- [Hexadecimal Virtual-Key Codes (Windows)](https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
-
 ## Usage
 1. You need to have the [.NET 10 runtime](https://dotnet.microsoft.com/download/dotnet/10.0) installed
 2. [Download the latest release](https://github.com/artop123/g920-mapper/releases/latest)
-3. Create a JSON configuration file (`wheelkeys.json`) with the desired key bindings. If the JSON file is missing, the application will prompt you to enter the settings manually, and they will be saved as a new JSON configuration file.
-4. Place the JSON file in the same directory as the executable.
-5. Run the application. The terminal user interface starts reading the wheel automatically and uses the configured mappings to emulate keyboard inputs.
+3. Edit the settings and key mappings using the UI.
+5. The application starts reading the wheel automatically and uses the configured mappings to emulate keyboard inputs.
 
 Running the application will not make any permanent modifications to the system. The application must always be running on the background while playing.
 
@@ -87,23 +83,11 @@ You need to have the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/
    cd g920-mapper
    ```
 
-   **Restore Dependencies**
+   **Build, test & run**
    ```sh
    dotnet restore
-   ```
-
-   **Build the Project**
-   ```sh
    dotnet build
-   ```
-
-   **Run Tests**
-   ```sh
    dotnet test
-   ```
-
-   **Run the Application**
-   ```sh
    dotnet run --project g920-mapper
    ```
 
