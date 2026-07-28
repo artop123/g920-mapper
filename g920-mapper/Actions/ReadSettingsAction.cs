@@ -42,38 +42,23 @@ namespace g920_mapper.Actions
 				? res
 				: null;
 		}
-		private int? GetCurrentValue(object? value) => value switch
-		{
-			true => 1,
-			false => 0,
-			_ => (int?)value
-		};
-
 		private WheelSettings ReadFromUser()
 		{
 			var settings = new WheelSettings();
 			var properties = typeof(WheelSettings)
 				.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-				.Where(p => p.PropertyType == typeof(int) || p.PropertyType == typeof(bool));
+				.Where(p => p.PropertyType == typeof(int));
 
 			Console.WriteLine("No settings found. Please enter the following settings. Leave empty to use default values.");
 
 			foreach (var property in properties)
 			{
-				var value = property.GetValue(settings);
-				var currentValue = GetCurrentValue(value);
+				var currentValue = (int?)property.GetValue(settings);
 				var newValue = ReadSetting($"Enter value for {property.Name} (current {currentValue}): ");
 
 				if (newValue.HasValue)
 				{
-					if (property.PropertyType == typeof(int))
-					{
-						property.SetValue(settings, newValue.Value);
-					}
-					else if (property.PropertyType == typeof(bool))
-					{
-						property.SetValue(settings, newValue.Value == 1);
-					}
+					property.SetValue(settings, newValue.Value);
 				}
 			}
 
@@ -91,7 +76,7 @@ namespace g920_mapper.Actions
 			return settings;
 		}
 
-		private WheelSettings? ReadFromFile()
+		private WheelSettings? ReadFromFile(bool writeError = true)
 		{
 			try
 			{
@@ -106,7 +91,8 @@ namespace g920_mapper.Actions
 
 			catch (Exception ex)
 			{
-				Console.WriteLine($"{ex.Message}");
+				if (writeError)
+					Console.WriteLine($"{ex.Message}");
 			}
 
 			return null;
@@ -116,6 +102,15 @@ namespace g920_mapper.Actions
 		{
 			var json = JsonSerializer.Serialize(settings);
 			File.WriteAllText(_path, json);
+		}
+
+		public WheelSettings LoadOrDefault()
+			=> ReadFromFile(writeError: false) ?? new WheelSettings();
+
+		public void Save(WheelSettings settings)
+		{
+			ArgumentNullException.ThrowIfNull(settings);
+			SaveToFile(settings);
 		}
 
 		public WheelSettings Execute()

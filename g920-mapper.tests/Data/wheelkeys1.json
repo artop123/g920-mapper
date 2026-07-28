@@ -6,7 +6,6 @@
   "PedalsBrakeValue": 5,
   "PedalsClutchValue": 6,
   "DefaultValue": 7,
-  "Debug": true,
   "Keys": {
     "WHEEL_ROTATION_LEFT": 37,
     "WHEEL_ROTATION_RIGHT": 39,

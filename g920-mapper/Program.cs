@@ -1,37 +1,29 @@
 ﻿using g920_mapper.Actions;
 using g920_mapper.Services;
+using g920_mapper.UI;
+using Terminal.Gui.App;
 
 class Program
 {
 	private static string _filePath = "wheelkeys.json";
 
-	static async Task Main(string[] args)
+	static void Main(string[] args)
 	{
-		var settings = new ReadSettingsAction(_filePath)
-			.Execute();
+		var settingsAction = new ReadSettingsAction(_filePath);
+		var settings = settingsAction.LoadOrDefault();
+		using var joystickReader = new JoystickReaderService(settings);
+		using IApplication application = Application.Create();
 
-		var joystickReader = new JoystickReaderService(settings);
-		var running = true;
-
-		Console.WriteLine("Press ESC or CTRL+c to stop");
-		Console.CancelKeyPress += async (sender, e) =>
+		try
 		{
-			await joystickReader.StopAsync(CancellationToken.None);
-			e.Cancel = false;
-			running = false;
-		};
-
-		await joystickReader.StartAsync(CancellationToken.None);
-
-		while (running)
-		{
-			if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape)
-			{
-				await joystickReader.StopAsync(CancellationToken.None);
-				running = false;
-			}
+			application.Init();
+			using var window = new MapperWindow(application, joystickReader, settings, settingsAction);
+			joystickReader.StartAsync(CancellationToken.None).GetAwaiter().GetResult();
+			application.Run(window);
 		}
-
-		joystickReader.Dispose();
+		finally
+		{
+			joystickReader.StopAsync(CancellationToken.None).GetAwaiter().GetResult();
+		}
 	}
 }

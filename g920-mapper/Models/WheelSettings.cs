@@ -9,7 +9,6 @@
 		public int PedalsBrakeValue { get; set; }
 		public int PedalsClutchValue { get; set; }
 		public int DefaultValue { get; set; }
-		public bool Debug { get; set; }
 		public WheelKeys Keys { get; set; }
 
 		public WheelSettings()
@@ -23,7 +22,6 @@
 			PedalsClutchValue = 65535;
 			RotationMinDiff = 1000;
 			LoopDuration = 100;
-			Debug = false;
 		}
 	}
 }

@@ -14,12 +14,11 @@ The configuration file should be in JSON format and allows you to specify the ke
 {
     "DefaultRotation": 32767,
     "RotationMinDiff": 1000,
-    "LoopDuration": 100
+    "LoopDuration": 100,
     "PedalsAccelerationValue": 50000,
     "PedalsBrakeValue": 50000,
     "PedalsClutchValue": 50000,
     "DefaultValue": 32767,
-    "Debug": false,
     "Keys": {
         "WHEEL_ROTATION_LEFT": 37,
         "WHEEL_ROTATION_RIGHT": 39,
@@ -52,7 +51,6 @@ The configuration file should be in JSON format and allows you to specify the ke
 - **`PedalsBrakeValue`**: Brake pedal rotation to trigger a keyboard event.
 - **`PedalsClutchValue`**: Clutch pedal rotation to trigger a keyboard event.
 - **`DefaultValue`**: Ignored pedal value (initial pedal rotation).
-- **`Debug`**: Enable or disable debug messages.
 - **`Keys`**: Contains key-value pairs that map G920 inputs to keyboard keys. Values can be provided as hexadecimal strings (`"0x41"`), integers (`65`), or characters (`"A"`). All these formats will map to the `A` key.
 
 ### Key Mapping
@@ -69,25 +67,30 @@ The configuration file should be in JSON format and allows you to specify the ke
 - [Hexadecimal Virtual-Key Codes (Windows)](https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
 
 ## Usage
-1. You need to have the [.NET 8 runtime](https://dotnet.microsoft.com/download/dotnet/8.0) installed
+1. You need to have the [.NET 10 runtime](https://dotnet.microsoft.com/download/dotnet/10.0) installed
 2. [Download the latest release](https://github.com/artop123/g920-mapper/releases/latest)
 3. Create a JSON configuration file (`wheelkeys.json`) with the desired key bindings. If the JSON file is missing, the application will prompt you to enter the settings manually, and they will be saved as a new JSON configuration file.
 4. Place the JSON file in the same directory as the executable.
-5. Run the application, and it will use the key mappings specified in the JSON to emulate keyboard inputs from the G920 controller.
+5. Run the application. The terminal user interface starts reading the wheel automatically and uses the configured mappings to emulate keyboard inputs.
+
+## Terminal user interface
+
+The terminal user interface shows the wheel connection state, current steering and pedal values, active wheel inputs, and the keyboard keys currently being sent.
+
+- Select a setting or key mapping with the arrow keys.
+- Press Enter or use the corresponding **Edit** button to change the selected value.
+- Key mappings accept a single character, a named key such as `LEFT`, `ENTER`, or `F1`, a decimal virtual-key code, or a hexadecimal value such as `0x41`.
+- Use `0` or `0x00` to remove a mapping.
+- Changes are saved to `wheelkeys.json` and applied immediately.
+- Use the start and stop buttons to control wheel polling. Press Esc or choose **Quit** to close the application.
 
 Running the application will not make any permanent modifications to the system. The application must always be running on the background while playing.
 
 Antivirus programs may prevent the application from running if downloaded from GitHub. Consider building from the source or adding an exception.
 
-## Debugging
-
-With debugging enabled (`Debug: true`), you can view the values parsed from the controller. This helps you determine the optimal settings for steering and pedals.
-
-![Debugging example](assets/debugging.jpg)
-
 ## Development
 
-You need to have the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) installed
+You need to have the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) installed
 
    **Clone the Repository**
    ```sh
