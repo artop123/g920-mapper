@@ -1,16 +1,16 @@
-﻿# Logitech G920 keyboard mapper
+﻿# Logitech G920 Keyboard Mapper
 
 ![Logitech G920 keyboard mapper](assets/tui.jpg)
 
-This project maps Logitech G920 racing wheel inputs to keyboard keys, enabling the wheel to be used for older games that require traditional keyboard input (e.g., arrow keys).
+This project maps Logitech G920 racing wheel inputs to keyboard keys, enabling the wheel to be used with older games that require traditional keyboard input (e.g., arrow keys).
 
-The application reads input data from the controller using DirectInput (DirectX API). While designed for the G920, it may work with other DirectInput-compatible controllers, though adjustments might be needed for different layouts.
+The application reads input from the controller through DirectInput, part of the DirectX API. While designed for the G920, it may work with other DirectInput-compatible controllers, though adjustments might be needed for different layouts.
 
-## Configuration File (`wheelkeys.json`)
+## Configuration file (`wheelkeys.json`)
 
-The configuration file should be in JSON format and allows you to specify the key bindings for various G920 inputs. The configuration can be modified using the terminal user interface or editing the JSON file.
+The configuration is stored in JSON format and specifies the key bindings for various G920 inputs. It can be modified through the terminal user interface or by editing the JSON file directly.
 
-Below is a complete example JSON structure with descriptions of each field:
+The following is a complete example configuration:
 
 ```json
 {
@@ -45,56 +45,60 @@ Below is a complete example JSON structure with descriptions of each field:
 }
 ```
 
-### Field Descriptions
+### Field descriptions
+
 - **`DefaultRotation`**: Default rotation value for the wheel (no action).
 - **`RotationMinDiff`**: How much rotation is required to trigger a keyboard event.
-- **`LoopDuration`**: Loop interval for polling input, in milliseconds.
-- **`PedalsAccelerationValue`**: Acceleration pedal rotation to trigger a keyboard event.
-- **`PedalsBrakeValue`**: Brake pedal rotation to trigger a keyboard event.
-- **`PedalsClutchValue`**: Clutch pedal rotation to trigger a keyboard event.
-- **`DefaultValue`**: Ignored pedal value (initial pedal rotation).
+- **`LoopDuration`**: Loop interval for polling input in milliseconds.
+- **`PedalsAccelerationValue`**: Accelerator pedal threshold that triggers a keyboard event.
+- **`PedalsBrakeValue`**: Brake pedal threshold that triggers a keyboard event.
+- **`PedalsClutchValue`**: Clutch pedal threshold that triggers a keyboard event.
+- **`DefaultValue`**: Pedal input value that should be ignored.
 - **`Keys`**: Contains key-value pairs that map G920 inputs to keyboard keys. Values can be provided as hexadecimal strings (`"0x41"`), integers (`65`), or characters (`"A"`). All these formats will map to the `A` key.
 
-### Key Mapping
-- `WHEEL_ROTATION_LEFT` / `WHEEL_ROTATION_RIGHT`: Mapped to arrow left/right keys (`37`, `39`).
+### Key mapping
+
+- `WHEEL_ROTATION_LEFT` / `WHEEL_ROTATION_RIGHT`: Mapped to the left and right arrow keys (`37`, `39`).
 - `WHEEL_A`, `WHEEL_B`, `WHEEL_X`, `WHEEL_Y`: Correspond to the `A`, `B`, `X`, `Y` buttons on the wheel and can be mapped to different keyboard keys (`65` for `A`, etc.).
 - `WHEEL_LB` / `WHEEL_RB`: Left and right bumper buttons on the wheel.
 - `WHEEL_LSB` / `WHEEL_RSB`: Left and right stick buttons on the wheel.
-- `WHEEL_ACTION_RIGHT` / `WHEEL_ACTION_LEFT`: Action buttons, such as ENTER (`13`) and ESC (`27`).
+- `WHEEL_ACTION_RIGHT` / `WHEEL_ACTION_LEFT`: Action buttons, such as Enter (`13`) and Escape (`27`).
 - `WHEEL_ARROW_*`: D-pad arrow buttons mapped to arrow keys (`38`, `40`, `37`, `39`).
 
 ## Usage
-1. You need to have the [.NET 10 runtime](https://dotnet.microsoft.com/download/dotnet/10.0) installed
-2. [Download the latest release](https://github.com/artop123/g920-mapper/releases/latest)
-3. Edit the settings and key mappings using the UI.
-5. The application starts reading the wheel automatically and uses the configured mappings to emulate keyboard inputs.
 
-Running the application will not make any permanent modifications to the system. The application must always be running on the background while playing.
+1. Install the [.NET 10 runtime](https://dotnet.microsoft.com/download/dotnet/10.0).
+2. [Download the latest release](https://github.com/artop123/g920-mapper/releases/latest).
+3. Extract the archive and run `g920-mapper.exe`.
+4. Edit the settings and key mappings through the terminal user interface.
+5. Keep the application running while playing. It reads the wheel automatically and uses the configured mappings to emulate keyboard input.
 
-Antivirus programs may prevent the application from running if downloaded from GitHub. Consider building from the source or adding an exception.
+The application does not make permanent changes to the system. Antivirus software may prevent an application downloaded from GitHub from running. If this happens, consider building it from source or adding an antivirus exception.
 
 ## Development
 
-You need to have the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) installed
+Install the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0).
 
-   **Clone the Repository**
-   ```sh
-   git clone https://github.com/artop123/g920-mapper
-   cd g920-mapper
-   ```
+**Clone the repository**
 
-   **Build, test & run**
-   ```sh
-   dotnet restore
-   dotnet build
-   dotnet test
-   dotnet run --project g920-mapper
-   ```
+```sh
+git clone https://github.com/artop123/g920-mapper
+cd g920-mapper
+```
 
-   **Publish the Application**
+**Build, test, and run**
 
-   ```sh
-   dotnet publish g920-mapper/g920-mapper.csproj -p:PublishProfile=Release
-   ```
-   
-   The application (win-x64) will be published to `/g920-mapper/publish/` folder
+```sh
+dotnet restore
+dotnet build
+dotnet test
+dotnet run --project g920-mapper
+```
+
+**Publish the application**
+
+```sh
+dotnet publish g920-mapper/g920-mapper.csproj -p:PublishProfile=Release
+```
+
+The Windows x64 application will be published to the `g920-mapper/publish/` directory.
