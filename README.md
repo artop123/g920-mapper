@@ -73,17 +73,6 @@ The configuration file should be in JSON format and allows you to specify the ke
 4. Place the JSON file in the same directory as the executable.
 5. Run the application. The terminal user interface starts reading the wheel automatically and uses the configured mappings to emulate keyboard inputs.
 
-## Terminal user interface
-
-The terminal user interface shows the wheel connection state, current steering and pedal values, active wheel inputs, and the keyboard keys currently being sent.
-
-- Select a setting or key mapping with the arrow keys.
-- Press Enter or use the corresponding **Edit** button to change the selected value.
-- Key mappings accept a single character, a named key such as `LEFT`, `ENTER`, or `F1`, a decimal virtual-key code, or a hexadecimal value such as `0x41`.
-- Use `0` or `0x00` to remove a mapping.
-- Changes are saved to `wheelkeys.json` and applied immediately.
-- Use the start and stop buttons to control wheel polling. Press Esc or choose **Quit** to close the application.
-
 Running the application will not make any permanent modifications to the system. The application must always be running on the background while playing.
 
 Antivirus programs may prevent the application from running if downloaded from GitHub. Consider building from the source or adding an exception.
