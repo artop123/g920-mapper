@@ -5,6 +5,8 @@ using g920_mapper.Actions;
 using g920_mapper.Models;
 using g920_mapper.Services;
 using Terminal.Gui.App;
+using Terminal.Gui.Drawing;
+using Terminal.Gui.Drivers;
 using Terminal.Gui.ViewBase;
 using Terminal.Gui.Views;
 
@@ -32,9 +34,12 @@ namespace g920_mapper.UI
 		private readonly ListView _activeInputList = new();
 		private readonly ListView _settingsList = new();
 		private readonly ListView _mappingList = new();
+		private readonly List<View> _pages = [];
+		private readonly List<Button> _navigationButtons = [];
 
 		private readonly PropertyInfo[] _settingProperties;
 		private readonly PropertyInfo[] _mappingProperties;
+		private int _activePage;
 
 		public MapperWindow(
 			IApplication application,
@@ -59,11 +64,22 @@ namespace g920_mapper.UI
 				.OrderBy(property => property.MetadataToken)
 				.ToArray();
 
-			Title = "G920 Mapper – wheel status and key mappings (Esc to quit)";
+			BorderStyle = LineStyle.None;
 
 			BuildLayout();
 			RefreshSettings();
 			RefreshMappings();
+
+			KeyDown += (_, key) =>
+			{
+				if (key.NoShift.NoCtrl.NoAlt.KeyCode != KeyCode.Esc)
+					return;
+
+				if (_activePage != 0)
+					ShowPage(0);
+
+				key.Handled = true;
+			};
 
 			_joystickReader.StateChanged += OnJoystickStateChanged;
 			_joystickReader.StatusChanged += OnJoystickStatusChanged;
@@ -71,13 +87,24 @@ namespace g920_mapper.UI
 
 		private void BuildLayout()
 		{
+			const int sidebarWidth = 25;
+
+			var overviewPage = new View
+			{
+				X = sidebarWidth,
+				Y = 0,
+				Width = Dim.Fill(),
+				Height = Dim.Fill()
+			};
+
 			var statusFrame = new FrameView
 			{
-				Title = "Wheel status",
+				Title = " Wheel status ",
+				SchemeName = "Base",
 				X = 0,
 				Y = 0,
 				Width = Dim.Percent(50),
-				Height = 12
+				Height = Dim.Fill()
 			};
 
 			AddValueRow(statusFrame, "Connection:", _statusValue, 0, "Starting…");
@@ -90,81 +117,145 @@ namespace g920_mapper.UI
 
 			var activeFrame = new FrameView
 			{
-				Title = "Active wheel inputs",
+				Title = " Active wheel inputs ",
+				SchemeName = "Accent",
 				X = Pos.Right(statusFrame),
 				Y = 0,
 				Width = Dim.Fill(),
-				Height = 12
+				Height = Dim.Fill()
 			};
 
-			_activeInputList.X = 0;
-			_activeInputList.Y = 0;
-			_activeInputList.Width = Dim.Fill();
-			_activeInputList.Height = Dim.Fill();
+			_activeInputList.X = 1;
+			_activeInputList.Y = 1;
+			_activeInputList.Width = Dim.Fill(1);
+			_activeInputList.Height = Dim.Fill(1);
 			_activeInputList.SetSource(_activeInputs);
 			activeFrame.Add(_activeInputList);
+			overviewPage.Add(statusFrame, activeFrame);
 
-			var settingsFrame = new FrameView
+			var settingsPage = new FrameView
 			{
-				Title = "Settings (Enter or Edit)",
-				X = 0,
-				Y = Pos.Bottom(statusFrame),
-				Width = Dim.Percent(50),
-				Height = Dim.Fill(3)
+				Title = " Settings  •  Enter to edit  •  Esc to return ",
+				SchemeName = "Accent",
+				X = sidebarWidth,
+				Y = 0,
+				Width = Dim.Fill(),
+				Height = Dim.Fill(),
+				Visible = false
 			};
 
-			_settingsList.X = 0;
-			_settingsList.Y = 0;
-			_settingsList.Width = Dim.Fill();
-			_settingsList.Height = Dim.Fill();
+			_settingsList.X = 1;
+			_settingsList.Y = 1;
+			_settingsList.Width = Dim.Fill(1);
+			_settingsList.Height = Dim.Fill(1);
 			_settingsList.SetSource(_settingItems);
 			_settingsList.Accepting += (_, args) =>
 			{
 				EditSelectedSetting();
 				args.Handled = true;
 			};
-			settingsFrame.Add(_settingsList);
+			settingsPage.Add(_settingsList);
 
-			var mappingsFrame = new FrameView
+			var mappingsPage = new FrameView
 			{
-				Title = "Key mappings (Enter or Edit)",
-				X = Pos.Right(settingsFrame),
-				Y = Pos.Bottom(activeFrame),
+				Title = " Key mappings  •  Enter to capture a key  •  Esc to return ",
+				SchemeName = "Accent",
+				X = sidebarWidth,
+				Y = 0,
 				Width = Dim.Fill(),
-				Height = Dim.Fill(3)
+				Height = Dim.Fill(),
+				Visible = false
 			};
 
-			_mappingList.X = 0;
-			_mappingList.Y = 0;
-			_mappingList.Width = Dim.Fill();
-			_mappingList.Height = Dim.Fill();
+			_mappingList.X = 1;
+			_mappingList.Y = 1;
+			_mappingList.Width = Dim.Fill(1);
+			_mappingList.Height = Dim.Fill(1);
 			_mappingList.SetSource(_mappingItems);
 			_mappingList.Accepting += (_, args) =>
 			{
 				EditSelectedMapping();
 				args.Handled = true;
 			};
-			mappingsFrame.Add(_mappingList);
+			mappingsPage.Add(_mappingList);
 
-			var buttonBar = new FrameView
+			var menuFrame = new FrameView
 			{
+				Title = " Menu ",
+				SchemeName = "Base",
 				X = 0,
-				Y = Pos.AnchorEnd(3),
-				Width = Dim.Fill(),
-				Height = 3
+				Y = 0,
+				Width = sidebarWidth - 1,
+				Height = Dim.Fill()
 			};
 
-			var startButton = CreateButton("_Start", 0, () =>
-				_joystickReader.StartAsync(CancellationToken.None).GetAwaiter().GetResult());
-			var stopButton = CreateButton("S_top", Pos.Right(startButton) + 1, () =>
-				_joystickReader.StopAsync(CancellationToken.None).GetAwaiter().GetResult());
-			var editSettingButton = CreateButton("Edit s_etting", Pos.Right(stopButton) + 1, EditSelectedSetting);
-			var editMappingButton = CreateButton("Edit _mapping", Pos.Right(editSettingButton) + 1, EditSelectedMapping);
-			var saveButton = CreateButton("Sa_ve", Pos.Right(editMappingButton) + 1, SaveSettings);
-			var quitButton = CreateButton("_Quit", Pos.Right(saveButton) + 1, _application.RequestStop);
+			var overviewButton = CreateButton("_Overview", 1, () => ShowPage(0));
+			overviewButton.Y = 0;
+			overviewButton.Width = Dim.Fill(1);
 
-			buttonBar.Add(startButton, stopButton, editSettingButton, editMappingButton, saveButton, quitButton);
-			Add(statusFrame, activeFrame, settingsFrame, mappingsFrame, buttonBar);
+			var settingsButton = CreateButton("_Settings", 1, () => ShowPage(1));
+			settingsButton.Y = 1;
+			settingsButton.Width = Dim.Fill(1);
+
+			var mappingsButton = CreateButton("_Key mappings", 1, () => ShowPage(2));
+			mappingsButton.Y = 2;
+			mappingsButton.Width = Dim.Fill(1);
+
+			var startButton = CreateButton("_Start wheel", 1, () =>
+				_joystickReader.StartAsync(CancellationToken.None).GetAwaiter().GetResult());
+			startButton.Y = 4;
+			startButton.Width = Dim.Fill(1);
+
+			var stopButton = CreateButton("S_top wheel", 1, () =>
+				_joystickReader.StopAsync(CancellationToken.None).GetAwaiter().GetResult());
+			stopButton.Y = 5;
+			stopButton.Width = Dim.Fill(1);
+
+			var quitButton = CreateButton("_Quit", 1, _application.RequestStop);
+			quitButton.Y = 7;
+			quitButton.Width = Dim.Fill(1);
+
+			menuFrame.Add(
+				overviewButton,
+				settingsButton,
+				mappingsButton,
+				startButton,
+				stopButton,
+				quitButton);
+
+			_pages.AddRange([overviewPage, settingsPage, mappingsPage]);
+			_navigationButtons.AddRange([overviewButton, settingsButton, mappingsButton]);
+
+			Add(overviewPage, settingsPage, mappingsPage, menuFrame);
+			ShowPage(0);
+		}
+
+		private void ShowPage(int pageIndex)
+		{
+			if (pageIndex < 0 || pageIndex >= _pages.Count)
+				return;
+
+			_activePage = pageIndex;
+
+			for (var index = 0; index < _pages.Count; index++)
+				_pages[index].Visible = index == _activePage;
+
+			_navigationButtons[0].Title = _activePage == 0 ? "› _Overview" : "  _Overview";
+			_navigationButtons[1].Title = _activePage == 1 ? "› _Settings" : "  _Settings";
+			_navigationButtons[2].Title = _activePage == 2 ? "› _Key mappings" : "  _Key mappings";
+
+			switch (_activePage)
+			{
+				case 1:
+					_settingsList.SetFocus();
+					break;
+				case 2:
+					_mappingList.SetFocus();
+					break;
+				default:
+					_activeInputList.SetFocus();
+					break;
+			}
 		}
 
 		private static void AddValueRow(
@@ -177,16 +268,16 @@ namespace g920_mapper.UI
 			parent.Add(new Label
 			{
 				Text = name,
-				X = 0,
-				Y = row,
+				X = 1,
+				Y = row + 1,
 				Width = 13,
 				Height = 1
 			});
 
 			valueLabel.Text = initialValue;
-			valueLabel.X = 14;
-			valueLabel.Y = row;
-			valueLabel.Width = Dim.Fill();
+			valueLabel.X = 15;
+			valueLabel.Y = row + 1;
+			valueLabel.Width = Dim.Fill(1);
 			valueLabel.Height = 1;
 			parent.Add(valueLabel);
 		}
@@ -323,7 +414,7 @@ namespace g920_mapper.UI
 		{
 			using var dialog = new Dialog
 			{
-				Title = title,
+				Title = $" {title} ",
 				Width = 72,
 				Height = 10
 			};
@@ -359,7 +450,7 @@ namespace g920_mapper.UI
 		{
 			using var dialog = new Dialog
 			{
-				Title = title,
+				Title = $" {title} ",
 				Width = 64,
 				Height = 9
 			};
@@ -455,7 +546,7 @@ namespace g920_mapper.UI
 		}
 
 		private void ShowError(string message)
-			=> MessageBox.ErrorQuery(_application, "Error", message, "_OK");
+			=> MessageBox.ErrorQuery(_application, " Error ", message, "_OK");
 
 		protected override void Dispose(bool disposing)
 		{
